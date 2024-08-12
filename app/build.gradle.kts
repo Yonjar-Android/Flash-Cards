@@ -95,6 +95,10 @@ dependencies {
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
 
+    //Constraint Layout
+
+    implementation(libs.androidx.constraintlayout)
+
 }
 
 kapt {
