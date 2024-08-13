@@ -97,7 +97,7 @@ dependencies {
 
     //Constraint Layout
 
-    implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.constraintlayout.compose)
 
 }
 
