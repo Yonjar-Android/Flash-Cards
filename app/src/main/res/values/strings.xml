@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Flash Cards</string>
+
+    <string name="tokenIdClient">36412686936-0oi15vrn58p3h8220f7qs6j0rlm4co69.apps.googleusercontent.com</string>
 </resources>

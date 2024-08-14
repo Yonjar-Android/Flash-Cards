@@ -12,7 +12,20 @@
           "package_name": "com.example.flashcards"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "36412686936-tmh6epn2niovfc82ib90h4shf86ceg9v.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.flashcards",
+            "certificate_hash": "e4ab494a459d552cef290df2c78035e855989fd8"
+          }
+        },
+        {
+          "client_id": "36412686936-0oi15vrn58p3h8220f7qs6j0rlm4co69.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyC7NQqQUalu8-LxtwohQlxLbIOIOo57ws4"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "36412686936-0oi15vrn58p3h8220f7qs6j0rlm4co69.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
