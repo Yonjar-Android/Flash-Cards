@@ -2,6 +2,8 @@ package com.example.flashcards.flashCards.ui.flashCardsScreen
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
@@ -12,10 +14,13 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.flashcards.R
 import com.example.flashcards.flashCards.ui.flashCardsScreen.cardsScreen.CardsScreen
 import com.example.flashcards.flashCards.ui.flashCardsScreen.studyScreen.StudyScreen
 
@@ -59,7 +64,11 @@ fun BottomNavigation(navHostController: NavHostController) {
             navIndex = 0
             navHostController.navigate("StudyScreen")
         }, icon = {
-
+            Icon(
+                modifier = Modifier.size(30.dp),
+                painter = painterResource(id = R.drawable.studyicon),
+                contentDescription = "Study Icon"
+            )
         },
             label = {
                 Text(text = "Study")
@@ -72,7 +81,11 @@ fun BottomNavigation(navHostController: NavHostController) {
                 navHostController.navigate("CardsScreen")
             },
             icon = {
-
+                Icon(
+                    modifier = Modifier.size(30.dp),
+                    painter = painterResource(id = R.drawable.cards),
+                    contentDescription = "Cards Icon"
+                )
             },
             label = {
                 Text(text = "Flash Cards")
