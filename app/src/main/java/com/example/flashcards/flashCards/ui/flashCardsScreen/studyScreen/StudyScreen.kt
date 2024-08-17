@@ -1,25 +1,44 @@
 package com.example.flashcards.flashCards.ui.flashCardsScreen.studyScreen
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -28,7 +47,23 @@ import androidx.compose.ui.unit.sp
 import com.example.flashcards.R
 
 @Composable
-fun StudyScreen() {
+fun StudyScreen(studyScreenViewModel: StudyScreenViewModel) {
+
+    val state = studyScreenViewModel.state.collectAsState()
+
+    var flashCards = studyScreenViewModel.flashcards.collectAsState()
+
+    val context = LocalContext.current
+
+    var show by rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    LaunchedEffect(Unit) {
+        studyScreenViewModel.getFlashCards()
+    }
+
+
 
     Column(
         Modifier
@@ -72,10 +107,45 @@ fun StudyScreen() {
             .padding(end = 20.dp, bottom = 20.dp),
         contentAlignment = Alignment.BottomEnd
     ) {
-        FabAddButton {
+        FabAddButton { show = true }
+    }
 
+
+    if (show) {
+        DialogAddCards(studyScreenViewModel, close = { show = false })
+    }
+
+
+    when (val currentState = state.value) {
+        is StudyScreenState.Error -> {
+            Toast.makeText(context, currentState.error, Toast.LENGTH_LONG).show()
+            studyScreenViewModel.resetState()
+        }
+
+        StudyScreenState.Initial -> {}
+
+        StudyScreenState.Loading -> {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Box(modifier = Modifier
+                    .padding(15.dp)
+                    .background(Color.White)
+                    .clip(CircleShape)) {
+                    CircularProgressIndicator()
+                }
+
+            }
+            studyScreenViewModel.resetState()
+        }
+
+        is StudyScreenState.Success -> {
+            if (currentState.message.isNotBlank()) {
+                Toast.makeText(context, currentState.message, Toast.LENGTH_LONG).show()
+            }
+            studyScreenViewModel.resetState()
         }
     }
+
+
 }
 
 @Composable
@@ -89,4 +159,115 @@ fun FabAddButton(showCard: () -> Unit) {
         Icon(imageVector = Icons.Filled.Add, contentDescription = "Add Card", tint = Color.White)
 
     }
+}
+
+@Composable
+fun DialogAddCards(studyScreenViewModel: StudyScreenViewModel, close: () -> Unit) {
+
+    var name by remember {
+        mutableStateOf("")
+    }
+
+    var answer by remember {
+        mutableStateOf("")
+    }
+
+    Box(
+        Modifier
+            .fillMaxSize()
+            .clip(RoundedCornerShape(30.dp))
+    ) {
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.White),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
+            ) {
+                IconButton(onClick = {
+                    close()
+                }) {
+                    Icon(
+                        modifier = Modifier.size(50.dp),
+                        imageVector = Icons.Filled.Clear, contentDescription = "Close Icon"
+                    )
+                }
+            }
+
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(20.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "Crear flash card",
+                    fontSize = 32.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
+
+                Spacer(modifier = Modifier.size(30.dp))
+
+                TextFieldComponent("Concepto", name) { name = it }
+
+                Spacer(modifier = Modifier.size(30.dp))
+
+                TextFieldComponent("Respuesta", answer) { answer = it }
+
+                Spacer(modifier = Modifier.size(30.dp))
+
+                Button(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 10.dp),
+                    onClick = {
+                        studyScreenViewModel.createFlashCard(name, answer)
+                    }) {
+                    Text(
+                        text = "Crear",
+                        fontSize = 32.sp,
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun TextFieldComponent(labelText: String, actualValue: String, onChangeValue: (String) -> Unit) {
+
+
+    Spacer(modifier = Modifier.size(10.dp))
+
+    TextField(
+        modifier = Modifier.fillMaxWidth(),
+        value = actualValue,
+        onValueChange = { onChangeValue(it) },
+        maxLines = 1,
+        singleLine = true,
+        shape = RoundedCornerShape(20.dp),
+        label = {
+            Text(
+                text = labelText,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.SemiBold,
+            )
+
+        },
+        colors = TextFieldDefaults.colors(
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+            disabledIndicatorColor = Color.Transparent
+        )
+    )
+
 }

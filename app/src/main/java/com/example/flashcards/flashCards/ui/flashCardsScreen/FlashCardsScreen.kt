@@ -23,9 +23,10 @@ import androidx.navigation.compose.rememberNavController
 import com.example.flashcards.R
 import com.example.flashcards.flashCards.ui.flashCardsScreen.cardsScreen.CardsScreen
 import com.example.flashcards.flashCards.ui.flashCardsScreen.studyScreen.StudyScreen
+import com.example.flashcards.flashCards.ui.flashCardsScreen.studyScreen.StudyScreenViewModel
 
 @Composable
-fun FlashCardsScreen() {
+fun FlashCardsScreen(studyScreenViewModel: StudyScreenViewModel) {
 
     val navigationController = rememberNavController()
 
@@ -41,7 +42,7 @@ fun FlashCardsScreen() {
             ) {
 
                 composable("StudyScreen") {
-                    StudyScreen()
+                    StudyScreen(studyScreenViewModel)
                 }
 
                 composable("CardsScreen") {

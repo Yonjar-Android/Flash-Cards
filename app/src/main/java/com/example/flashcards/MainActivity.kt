@@ -9,6 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.flashcards.flashCards.ui.flashCardsScreen.FlashCardsScreen
+import com.example.flashcards.flashCards.ui.flashCardsScreen.studyScreen.StudyScreenViewModel
 import com.example.flashcards.flashCards.ui.initialScreen.InitialScreen
 import com.example.flashcards.flashCards.ui.initialScreen.InitialScreenViewModel
 import com.example.flashcards.ui.theme.FlashCardsTheme
@@ -18,6 +19,8 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     private val initialScreenViewModel:InitialScreenViewModel by viewModels()
+
+    private val studyScreenViewModel: StudyScreenViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,7 +36,7 @@ class MainActivity : ComponentActivity() {
                     }
 
                     composable("FlashCardsScreen"){
-                        FlashCardsScreen()
+                        FlashCardsScreen(studyScreenViewModel)
                     }
                 }
 
