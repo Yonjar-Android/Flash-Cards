@@ -111,10 +111,16 @@ fun StudyScreen(studyScreenViewModel: StudyScreenViewModel) {
     }
 
 
+    /* Si el valor de la variable show es true, entonces se muestra la pantalla para crear
+    una nueva flashCard */
+
     if (show) {
         DialogAddCards(studyScreenViewModel, close = { show = false })
     }
 
+
+    /* Verificamos el valor del estado del viewModel y acorde a ello realizamos ciertas
+     acciones a mostrar en la pantalla */
 
     when (val currentState = state.value) {
         is StudyScreenState.Error -> {
@@ -125,16 +131,22 @@ fun StudyScreen(studyScreenViewModel: StudyScreenViewModel) {
         StudyScreenState.Initial -> {}
 
         StudyScreenState.Loading -> {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Box(modifier = Modifier
-                    .padding(15.dp)
-                    .background(Color.White)
-                    .clip(CircleShape)) {
-                    CircularProgressIndicator()
+            Box(
+                modifier = Modifier
+                    .fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Box(
+                    modifier = Modifier
+                        .background(Color.White, shape = RoundedCornerShape(36.dp))
+                        .padding(8.dp)
+                ) {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .size(40.dp)
+                    )
                 }
-
             }
-            studyScreenViewModel.resetState()
         }
 
         is StudyScreenState.Success -> {
@@ -161,8 +173,12 @@ fun FabAddButton(showCard: () -> Unit) {
     }
 }
 
+
 @Composable
-fun DialogAddCards(studyScreenViewModel: StudyScreenViewModel, close: () -> Unit) {
+fun DialogAddCards(
+    studyScreenViewModel: StudyScreenViewModel,
+    close: () -> Unit,
+) {
 
     var name by remember {
         mutableStateOf("")
@@ -229,6 +245,8 @@ fun DialogAddCards(studyScreenViewModel: StudyScreenViewModel, close: () -> Unit
                         .padding(horizontal = 10.dp),
                     onClick = {
                         studyScreenViewModel.createFlashCard(name, answer)
+
+                        close.invoke()
                     }) {
                     Text(
                         text = "Crear",
@@ -244,8 +262,6 @@ fun DialogAddCards(studyScreenViewModel: StudyScreenViewModel, close: () -> Unit
 
 @Composable
 fun TextFieldComponent(labelText: String, actualValue: String, onChangeValue: (String) -> Unit) {
-
-
     Spacer(modifier = Modifier.size(10.dp))
 
     TextField(
