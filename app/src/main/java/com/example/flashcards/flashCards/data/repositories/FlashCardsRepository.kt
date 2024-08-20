@@ -4,6 +4,7 @@ import com.example.flashcards.flashCards.data.models.FlashCardModel
 import com.example.flashcards.flashCards.domain.models.FlashCard
 import com.example.flashcards.flashCards.domain.repositories.FlashCardsRepo
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.suspendCancellableCoroutine
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -39,7 +40,14 @@ class FlashCardsRepository @Inject constructor(
         val newList: MutableList<FlashCard> = mutableListOf()
 
         for (i in oldList) {
-            newList.add(i.toFlashCardDomain())
+
+            /* Verifica que si el tiempo de revisión es ahora o ya ha pasado
+             entonces que agregue la flashcard para estudiarla */
+
+            if (i.nextReview <= System.currentTimeMillis()) {
+                newList.add(i.toFlashCardDomain())
+            }
+
         }
 
         return newList
@@ -65,6 +73,22 @@ class FlashCardsRepository @Inject constructor(
                     continuation.resume(ResultFlashCard.Success("Flashcard creada con éxito"))
                 }.addOnFailureListener { e ->
                     continuation.resume(ResultFlashCard.Error(e.message ?: ""))
+                }
+        }
+    }
+
+    override suspend fun updateFlashCardNextReview(flashCard: FlashCard): ResultFlashCard<String> {
+
+        val updateFlashCard: HashMap<String, Any> = hashMapOf("nextReview" to flashCard.nextReview)
+
+        return suspendCancellableCoroutine { continuation ->
+            firestore.collection("FlashCards").document(flashCard.id)
+                .update(updateFlashCard)
+                .addOnSuccessListener {
+                    continuation.resume(ResultFlashCard.Success(""))
+                }
+                .addOnFailureListener {
+                    continuation.resume(ResultFlashCard.Error(it.message ?: ""))
                 }
         }
     }

@@ -34,8 +34,8 @@ class StudyScreenViewModel @Inject constructor(private val repository: FlashCard
 
                     is ResultFlashCard.Success -> {
                         if (response.data.isEmpty()) {
-                            _state.value =
-                                StudyScreenState.Error(error = "No hay cartas para estudiar")
+                            _state.value = StudyScreenState.Error(error = "No hay cartas para estudiar")
+                            _flashCards.value = mutableListOf()
                         } else {
                             _flashCards.value = response.data
                         }
@@ -71,7 +71,30 @@ class StudyScreenViewModel @Inject constructor(private val repository: FlashCard
         }
     }
 
-    fun resetState(){
+    fun updateFlashCardReview(flashCard: FlashCard) {
+        viewModelScope.launch {
+            try {
+                val response = repository.updateFlashCardNextReview(flashCard)
+
+                when (response) {
+                    is ResultFlashCard.Error -> {
+                        _state.value = StudyScreenState.Error(response.error)
+
+                    }
+
+                    is ResultFlashCard.Success -> {
+                        _state.value = StudyScreenState.Success()
+                        getFlashCards()
+                    }
+                }
+
+            } catch (e: Exception) {
+                _state.value = StudyScreenState.Error(e.message ?: "")
+            }
+        }
+    }
+
+    fun resetState() {
         _state.value = StudyScreenState.Initial
     }
 

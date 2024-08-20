@@ -4,7 +4,7 @@ import com.example.flashcards.flashCards.domain.models.FlashCard
 import com.google.firebase.firestore.PropertyName
 
 data class FlashCardModel(
-    @PropertyName("flashCardId") val id:String = "",
+    @PropertyName("id") val id:String = "",
     @PropertyName("title") val title:String = "",
     @PropertyName("answer") val answer:String = "",
     @PropertyName("nextReview") val nextReview:Long = 0,

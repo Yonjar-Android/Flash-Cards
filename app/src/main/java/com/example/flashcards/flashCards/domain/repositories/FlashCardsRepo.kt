@@ -12,4 +12,6 @@ interface FlashCardsRepo {
 
     suspend fun createFlashCard(concept: String, response: String): ResultFlashCard<String>
 
+    suspend fun updateFlashCardNextReview(flashCard: FlashCard): ResultFlashCard<String>
+
 }

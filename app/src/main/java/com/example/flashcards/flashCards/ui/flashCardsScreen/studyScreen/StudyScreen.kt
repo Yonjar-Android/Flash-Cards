@@ -12,8 +12,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
@@ -45,6 +46,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.flashcards.R
+import com.example.flashcards.flashCards.domain.models.FlashCard
 
 @Composable
 fun StudyScreen(studyScreenViewModel: StudyScreenViewModel) {
@@ -56,6 +58,10 @@ fun StudyScreen(studyScreenViewModel: StudyScreenViewModel) {
     val context = LocalContext.current
 
     var show by rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    var showFlashCards by rememberSaveable {
         mutableStateOf(false)
     }
 
@@ -73,7 +79,9 @@ fun StudyScreen(studyScreenViewModel: StudyScreenViewModel) {
     ) {
 
         Text(
-            text = "Cartas por estudiar N°:", fontWeight = FontWeight.Bold, fontSize = 32.sp,
+            text = "Cartas por estudiar N°: ${flashCards.value.size}",
+            fontWeight = FontWeight.Bold,
+            fontSize = 32.sp,
             lineHeight = 30.sp,
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(horizontal = 35.dp)
@@ -95,7 +103,10 @@ fun StudyScreen(studyScreenViewModel: StudyScreenViewModel) {
                 .padding(horizontal = 40.dp),
             onClick = {
 
-            }, colors = ButtonDefaults.buttonColors(containerColor = Color(0xff072ECD))
+                showFlashCards = true
+
+            }, colors = ButtonDefaults.buttonColors(containerColor = Color(0xff072ECD)),
+            enabled = flashCards.value.isNotEmpty()
         ) {
             Text(text = "Estudiar", fontWeight = FontWeight.Bold, fontSize = 32.sp)
         }
@@ -115,9 +126,16 @@ fun StudyScreen(studyScreenViewModel: StudyScreenViewModel) {
     una nueva flashCard */
 
     if (show) {
-        DialogAddCards(studyScreenViewModel, close = { show = false })
+        DialogAddCards(studyScreenViewModel, close = { show = !show })
     }
 
+    if (showFlashCards) {
+        FlashCards(
+            studyScreenViewModel = studyScreenViewModel,
+            flashCards.value,
+            close = { showFlashCards = !showFlashCards }
+        )
+    }
 
     /* Verificamos el valor del estado del viewModel y acorde a ello realizamos ciertas
      acciones a mostrar en la pantalla */
@@ -229,15 +247,15 @@ fun DialogAddCards(
                     fontWeight = FontWeight.SemiBold
                 )
 
-                Spacer(modifier = Modifier.size(30.dp))
+                DefectSpacer()
 
                 TextFieldComponent("Concepto", name) { name = it }
 
-                Spacer(modifier = Modifier.size(30.dp))
+                DefectSpacer()
 
                 TextFieldComponent("Respuesta", answer) { answer = it }
 
-                Spacer(modifier = Modifier.size(30.dp))
+                DefectSpacer()
 
                 Button(
                     modifier = Modifier
@@ -285,5 +303,182 @@ fun TextFieldComponent(labelText: String, actualValue: String, onChangeValue: (S
             disabledIndicatorColor = Color.Transparent
         )
     )
+}
+
+
+@Composable
+fun FlashCards(
+    studyScreenViewModel: StudyScreenViewModel,
+    flashCards: List<FlashCard>,
+    close: () -> Unit
+) {
+
+    val context = LocalContext.current
+
+    var currentIndex = 0
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White),
+        contentAlignment = Alignment.Center
+    ) {
+        if (flashCards.isNotEmpty()) {
+            FlashCardItem(
+                studyScreenViewModel = studyScreenViewModel,
+                flashCard = flashCards[currentIndex],
+                onSwiped = { lambda ->
+                    if (flashCards.size == 1) {
+                        lambda(flashCards[0])
+                    } else {
+                        lambda(flashCards[1])
+                    }
+                })
+        } else {
+            close.invoke()
+        }
+
+    }
+}
+
+@Composable
+fun FlashCardItem(
+    studyScreenViewModel: StudyScreenViewModel,
+    flashCard: FlashCard,
+    onSwiped: ((FlashCard) -> Unit) -> Unit
+) {
+
+    val showAnswer = "Show answer"
+    val showQuestion = "Show question"
+
+    var textValue by rememberSaveable {
+        mutableStateOf(flashCard.title)
+    }
+
+    var textValueButton by rememberSaveable {
+        mutableStateOf(showAnswer)
+    }
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier.verticalScroll(rememberScrollState())
+    ) {
+
+        Text(
+            text = textValue,
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center
+        )
+
+        DefectSpacer()
+
+        Button(onClick = {
+            when (textValueButton) {
+                "Show answer" -> {
+                    textValueButton = showQuestion
+                    textValue = flashCard.answer
+                }
+
+                "Show question" -> {
+                    textValueButton = showAnswer
+                    textValue = flashCard.title
+                }
+            }
+
+        }) {
+            Text(
+                text = textValueButton,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center
+            )
+        }
+
+        DefectSpacer()
+
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.SpaceEvenly,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Button(onClick = {
+                updateNextReview(
+                    studyScreenViewModel = studyScreenViewModel,
+                    flashCard = flashCard,
+                    interval = 1 * 60 * 1000
+                ) // 1 minuto
+                onSwiped() { flashCard ->
+                    textValue = flashCard.title
+                    textValueButton = showAnswer
+                }
+            }) {
+                Text("1 Minuto")
+            }
+
+            Button(onClick = {
+                updateNextReview(
+                    studyScreenViewModel = studyScreenViewModel,
+                    flashCard = flashCard,
+                    interval = 5 * 60 * 1000
+                ) // 5 minutos
+                onSwiped() { flashCard ->
+                    textValue = flashCard.title
+                    textValueButton = showAnswer
+                }
+            }) {
+                Text("5 Minutos")
+            }
+
+            Button(onClick = {
+                updateNextReview(
+                    studyScreenViewModel = studyScreenViewModel,
+                    flashCard = flashCard,
+                    interval = 24 * 60 * 60 * 1000
+                ) // 1 día
+                onSwiped() { flashCard ->
+                    textValue = flashCard.title
+                    textValueButton = showAnswer
+                }
+            }) {
+                Text("1 Día")
+            }
+
+            Button(onClick = {
+                updateNextReview(
+                    studyScreenViewModel = studyScreenViewModel,
+                    flashCard = flashCard,
+                    interval = 7 * 24 * 60 * 60 * 1000
+                ) // 1 semana
+                onSwiped() { flashCard ->
+                    textValue = flashCard.title
+                    textValueButton = showAnswer
+                }
+            }) {
+                Text("1 Semana")
+            }
+        }
+    }
+}
+
+@Composable
+fun DefectSpacer() {
+    Spacer(modifier = Modifier.size(30.dp))
+}
+
+fun updateNextReview(
+    studyScreenViewModel: StudyScreenViewModel,
+    flashCard: FlashCard,
+    interval: Long
+) {
+    val nextReview = System.currentTimeMillis() + interval
+
+    studyScreenViewModel.updateFlashCardReview(
+        flashCard = flashCard.copy(
+            nextReview = nextReview
+        )
+    )
 
 }
+
