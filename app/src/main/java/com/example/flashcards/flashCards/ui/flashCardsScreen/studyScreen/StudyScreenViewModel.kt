@@ -29,7 +29,6 @@ class StudyScreenViewModel @Inject constructor(private val repository: FlashCard
                 when (response) {
                     is ResultFlashCard.Error -> {
                         _state.value = StudyScreenState.Error(response.error)
-
                     }
 
                     is ResultFlashCard.Success -> {
@@ -37,6 +36,7 @@ class StudyScreenViewModel @Inject constructor(private val repository: FlashCard
                             _state.value = StudyScreenState.Error(error = "No hay cartas para estudiar")
                             _flashCards.value = mutableListOf()
                         } else {
+                            _state.value = StudyScreenState.Success()
                             _flashCards.value = response.data
                         }
                     }
