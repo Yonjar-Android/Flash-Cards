@@ -83,6 +83,8 @@ dependencies {
     androidTestImplementation (libs.mockk.android)
     androidTestImplementation (libs.mockk.agent)
 
+    testImplementation (libs.kotlinx.coroutines.test)
+
     // Navigation Component
 
     implementation(libs.androidx.navigation.compose)
