@@ -51,6 +51,8 @@ class StudyScreenViewModel @Inject constructor(private val repository: FlashCard
 
         _state.value = StudyScreenState.Loading
 
+        if (!validations(title, answer)) return
+
         viewModelScope.launch {
             try {
                 val response = repository.createFlashCard(title, answer)
@@ -69,6 +71,16 @@ class StudyScreenViewModel @Inject constructor(private val repository: FlashCard
                 _state.value = StudyScreenState.Error(e.message ?: "")
             }
         }
+    }
+
+    fun validations(title:String, answer: String):Boolean{
+        return if (title.isBlank() || answer.isBlank()){
+            _state.value = StudyScreenState.Error("No puede dejar ninguno de los campos en blanco")
+            false
+        } else{
+            true
+        }
+
     }
 
     fun updateFlashCardReview(flashCard: FlashCard) {
