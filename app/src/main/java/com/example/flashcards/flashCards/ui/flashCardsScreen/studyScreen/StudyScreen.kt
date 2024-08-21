@@ -387,10 +387,13 @@ fun FlashCardItem(
                 }
             }
 
-        }) {
+        }, colors = ButtonDefaults.buttonColors(containerColor = Color(0XFF07D07D)),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp)) {
             Text(
                 text = textValueButton,
-                fontSize = 18.sp,
+                fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center
             )
@@ -403,61 +406,57 @@ fun FlashCardItem(
             verticalArrangement = Arrangement.SpaceEvenly,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Button(onClick = {
-                updateNextReview(
-                    studyScreenViewModel = studyScreenViewModel,
-                    flashCard = flashCard,
-                    interval = 1 * 60 * 1000
-                ) // 1 minuto
-                onSwiped() { flashCard ->
-                    textValue = flashCard.title
-                    textValueButton = showAnswer
-                }
-            }) {
-                Text("1 Minuto")
-            }
 
-            Button(onClick = {
-                updateNextReview(
-                    studyScreenViewModel = studyScreenViewModel,
-                    flashCard = flashCard,
-                    interval = 5 * 60 * 1000
-                ) // 5 minutos
-                onSwiped() { flashCard ->
-                    textValue = flashCard.title
-                    textValueButton = showAnswer
+            NextReviewButton(
+                studyScreenViewModel = studyScreenViewModel,
+                flashCard = flashCard,
+                interval = 1 * 60 * 1000,
+                text = "1 minuto",
+                onUpdateCompleted = {
+                    onSwiped() {
+                        textValue = it.title
+                        textValueButton = showAnswer
+                    }
                 }
-            }) {
-                Text("5 Minutos")
-            }
+            )
+            NextReviewButton(
+                studyScreenViewModel = studyScreenViewModel,
+                flashCard = flashCard,
+                interval = 5 * 60 * 1000,
+                text = "5 minutos",
+                onUpdateCompleted = {
+                    onSwiped() {
+                        textValue = it.title
+                        textValueButton = showAnswer
+                    }
+                }
+            )
 
-            Button(onClick = {
-                updateNextReview(
-                    studyScreenViewModel = studyScreenViewModel,
-                    flashCard = flashCard,
-                    interval = 24 * 60 * 60 * 1000
-                ) // 1 día
-                onSwiped() { flashCard ->
-                    textValue = flashCard.title
-                    textValueButton = showAnswer
+            NextReviewButton(
+                studyScreenViewModel = studyScreenViewModel,
+                flashCard = flashCard,
+                interval = 24 * 60 * 60 * 1000,
+                text = "1 Día",
+                onUpdateCompleted = {
+                    onSwiped() {
+                        textValue = it.title
+                        textValueButton = showAnswer
+                    }
                 }
-            }) {
-                Text("1 Día")
-            }
+            )
 
-            Button(onClick = {
-                updateNextReview(
-                    studyScreenViewModel = studyScreenViewModel,
-                    flashCard = flashCard,
-                    interval = 7 * 24 * 60 * 60 * 1000
-                ) // 1 semana
-                onSwiped() { flashCard ->
-                    textValue = flashCard.title
-                    textValueButton = showAnswer
+            NextReviewButton(
+                studyScreenViewModel = studyScreenViewModel,
+                flashCard = flashCard,
+                interval = 7 * 24 * 60 * 60 * 1000,
+                text = "1 Semana",
+                onUpdateCompleted = {
+                    onSwiped() {
+                        textValue = it.title
+                        textValueButton = showAnswer
+                    }
                 }
-            }) {
-                Text("1 Semana")
-            }
+            )
         }
     }
 }
@@ -479,6 +478,34 @@ fun updateNextReview(
             nextReview = nextReview
         )
     )
+
+}
+
+@Composable
+private fun NextReviewButton(
+    studyScreenViewModel: StudyScreenViewModel,
+    flashCard: FlashCard,
+    interval: Long,
+    text: String,
+    onUpdateCompleted: () -> Unit
+) {
+    Button(
+        onClick = {
+            updateNextReview(
+                studyScreenViewModel = studyScreenViewModel,
+                flashCard = flashCard,
+                interval = interval
+            )
+            onUpdateCompleted()
+        },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp)
+    ) {
+        Text(text, fontSize = 24.sp, fontWeight = FontWeight.SemiBold)
+    }
+
+    DefectSpacer()
 
 }
 

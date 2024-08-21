@@ -73,7 +73,7 @@ class StudyScreenViewModel @Inject constructor(private val repository: FlashCard
         }
     }
 
-    fun validations(title:String, answer: String):Boolean{
+    private fun validations(title:String, answer: String):Boolean{
         return if (title.isBlank() || answer.isBlank()){
             _state.value = StudyScreenState.Error("No puede dejar ninguno de los campos en blanco")
             false
