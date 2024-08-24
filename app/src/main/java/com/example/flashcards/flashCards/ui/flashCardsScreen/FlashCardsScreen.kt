@@ -1,5 +1,7 @@
 package com.example.flashcards.flashCards.ui.flashCardsScreen
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -22,11 +24,16 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.flashcards.R
 import com.example.flashcards.flashCards.ui.flashCardsScreen.cardsScreen.CardsScreen
+import com.example.flashcards.flashCards.ui.flashCardsScreen.cardsScreen.CardsViewModel
 import com.example.flashcards.flashCards.ui.flashCardsScreen.studyScreen.StudyScreen
 import com.example.flashcards.flashCards.ui.flashCardsScreen.studyScreen.StudyScreenViewModel
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun FlashCardsScreen(studyScreenViewModel: StudyScreenViewModel) {
+fun FlashCardsScreen(
+    studyScreenViewModel: StudyScreenViewModel,
+    cardsScreenViewModel: CardsViewModel
+) {
 
     val navigationController = rememberNavController()
 
@@ -46,7 +53,7 @@ fun FlashCardsScreen(studyScreenViewModel: StudyScreenViewModel) {
                 }
 
                 composable("CardsScreen") {
-                    CardsScreen()
+                    CardsScreen(cardsScreenViewModel)
                 }
 
             }

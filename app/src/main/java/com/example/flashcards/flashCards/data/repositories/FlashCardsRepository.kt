@@ -92,4 +92,16 @@ class FlashCardsRepository @Inject constructor(
                 }
         }
     }
+
+    override suspend fun deleteFlashCard(flashCardId: String): ResultFlashCard<String> {
+        return suspendCancellableCoroutine { continuation ->
+
+            firestore.collection("FlashCards").document(flashCardId).delete()
+                .addOnSuccessListener {
+                    continuation.resume(ResultFlashCard.Success("Se ha eliminado la flash card con éxito"))
+                }.addOnFailureListener {
+                    continuation.resume(ResultFlashCard.Error(it.message ?: ""))
+                }
+        }
+    }
 }
