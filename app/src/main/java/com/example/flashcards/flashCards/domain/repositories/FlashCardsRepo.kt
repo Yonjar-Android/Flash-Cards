@@ -14,6 +14,8 @@ interface FlashCardsRepo {
 
     suspend fun updateFlashCardNextReview(flashCard: FlashCard): ResultFlashCard<String>
 
+    suspend fun updateFlashCard(flashCard: FlashCard): ResultFlashCard<String>
+
     suspend fun deleteFlashCard(flashCardId:String): ResultFlashCard<String>
 
 }

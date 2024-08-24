@@ -69,6 +69,28 @@ class CardsViewModel @Inject constructor(
         }
     }
 
+    fun updateFlashCard(flashCard: FlashCard){
+        _state.update { CardsScreenState.Loading }
+
+        viewModelScope.launch {
+            try {
+                val response = repository.updateFlashCard(flashCard)
+
+                when(response){
+                    is ResultFlashCard.Error -> {
+                        _state.update { CardsScreenState.Error(response.error) }
+                    }
+                    is ResultFlashCard.Success -> {
+                        _state.update { CardsScreenState.Success(message = response.data) }
+                        getFlashCards()
+                    }
+                }
+            } catch (e:Exception){
+                _state.update { CardsScreenState.Error(e.message ?: "") }
+            }
+        }
+    }
+
     fun resetState() {
         _state.update { CardsScreenState.Initial }
     }

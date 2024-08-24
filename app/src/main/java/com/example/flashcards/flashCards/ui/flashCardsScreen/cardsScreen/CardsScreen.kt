@@ -5,12 +5,14 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -19,11 +21,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -106,6 +111,10 @@ fun DropDownMenuComp(flashCard: FlashCard, viewModel: CardsViewModel) {
         mutableStateOf(false)
     }
 
+    var showEditDialog by remember {
+        mutableStateOf(false)
+    }
+
     var showDropDownMenu by remember {
         mutableStateOf(false)
     }
@@ -127,7 +136,7 @@ fun DropDownMenuComp(flashCard: FlashCard, viewModel: CardsViewModel) {
                 Text(text = "Editar", fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
             }, onClick = {
                 showDropDownMenu = false
-
+                showEditDialog = true
             })
 
             DropdownMenuItem(text = {
@@ -139,15 +148,25 @@ fun DropDownMenuComp(flashCard: FlashCard, viewModel: CardsViewModel) {
         }
     }
 
-    if (showDeleteDialog){
-        DialogDelete(flashCard = flashCard, viewModel = viewModel,close = { showDeleteDialog = false})
+    if (showEditDialog) {
+        EditFormDialog(
+            flashCard = flashCard,
+            viewModel = viewModel,
+            close = { showEditDialog = false })
+    }
+
+    if (showDeleteDialog) {
+        DialogDelete(
+            flashCard = flashCard,
+            viewModel = viewModel,
+            close = { showDeleteDialog = false })
     }
 }
 
 @Composable
 fun DialogDelete(flashCard: FlashCard, viewModel: CardsViewModel, close: () -> Unit) {
     AlertDialog(onDismissRequest = {}, confirmButton = {
-        TextButton(onClick = {
+        Button(onClick = {
             viewModel.deleteFlashCard(flashCard.id)
             close()
         }) {
@@ -163,12 +182,98 @@ fun DialogDelete(flashCard: FlashCard, viewModel: CardsViewModel, close: () -> U
             }
         },
         title = {
-            Text(text = "Eliminar flash card")
+            Text(text = "Eliminar flash card", fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
         },
         text = {
-            Text(text = "¿Deseas eliminar esta flash card?")
+            Text(text = "¿Deseas eliminar esta flash card?", fontSize = 16.sp)
         })
 }
+
+@Composable
+fun EditFormDialog(
+    flashCard: FlashCard,
+    viewModel: CardsViewModel,
+    close: () -> Unit
+) {
+
+    var question by remember {
+        mutableStateOf(flashCard.title)
+    }
+    var answer by remember {
+        mutableStateOf(flashCard.answer)
+    }
+
+    AlertDialog(
+        onDismissRequest = {},
+        title = {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(text = "Editar Flash Card", fontWeight = FontWeight.SemiBold)
+            }
+        },
+        text = {
+            Column {
+                OutlinedTextField(
+                    value = question,
+                    onValueChange = { question = it },
+                    label = {
+                        Text(
+                            text = "Pregunta",
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    maxLines = 3,
+                    textStyle = LocalTextStyle.current.copy(
+                        fontSize = 16.sp
+                    )
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                OutlinedTextField(
+                    value = answer,
+                    onValueChange = { answer = it },
+                    label = {
+                        Text(
+                            text = "Respuesta",
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    maxLines = 5,
+                    textStyle = LocalTextStyle.current.copy(
+                        fontSize = 16.sp
+                    )
+
+                )
+            }
+        },
+        confirmButton = {
+            Button(onClick = {
+                viewModel.updateFlashCard(
+                    flashCard = flashCard.copy(
+                        title = question,
+                        answer = answer
+                    )
+                )
+
+                close.invoke()
+            }) {
+                Text(text = "Actualizar")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = { close.invoke() }) {
+                Text(text = "Cancelar")
+            }
+        }
+    )
+}
+
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -178,10 +283,12 @@ fun FlashCardItem(flashCard: FlashCard, viewModel: CardsViewModel) {
             .fillMaxWidth()
             .padding(10.dp)
     ) {
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .padding(10.dp),
-            verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Column(
                 modifier = Modifier.weight(9f),
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -189,7 +296,7 @@ fun FlashCardItem(flashCard: FlashCard, viewModel: CardsViewModel) {
                 Text(
                     text = "Question: ${flashCard.title}",
                     textAlign = TextAlign.Center,
-                    fontSize = 16.sp,
+                    fontSize = 18.sp,
                     fontWeight = FontWeight.SemiBold,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 1
@@ -197,7 +304,7 @@ fun FlashCardItem(flashCard: FlashCard, viewModel: CardsViewModel) {
                 Text(
                     text = "Answer: ${flashCard.answer}",
                     textAlign = TextAlign.Center,
-                    fontSize = 14.sp,
+                    fontSize = 16.sp,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 2
                 )

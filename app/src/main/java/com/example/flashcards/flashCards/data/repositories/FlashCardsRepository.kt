@@ -93,6 +93,25 @@ class FlashCardsRepository @Inject constructor(
         }
     }
 
+    override suspend fun updateFlashCard(flashCard: FlashCard): ResultFlashCard<String> {
+        val updateFlashCard: HashMap<String, Any> = hashMapOf(
+            "title" to flashCard.title,
+            "answer" to flashCard.answer
+        )
+
+        return suspendCancellableCoroutine { continuation ->
+
+            firestore.collection("FlashCards").document(flashCard.id)
+                .update(updateFlashCard)
+                .addOnSuccessListener {
+                    continuation.resume(ResultFlashCard.Success("La flash card fue actualizada con éxito"))
+                }
+                .addOnFailureListener {
+                    continuation.resume(ResultFlashCard.Error(it.message ?: ""))
+                }
+        }
+    }
+
     override suspend fun deleteFlashCard(flashCardId: String): ResultFlashCard<String> {
         return suspendCancellableCoroutine { continuation ->
 
