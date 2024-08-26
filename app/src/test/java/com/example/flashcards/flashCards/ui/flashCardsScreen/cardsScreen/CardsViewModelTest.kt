@@ -29,7 +29,7 @@ class CardsViewModelTest{
 
     val error = "An error has occurred"
 
-    val flashCard = FlashCardMotherObject.flashCard
+    private val flashCard = FlashCardMotherObject.flashCard
 
     @Before
     fun setUp(){
@@ -57,6 +57,159 @@ class CardsViewModelTest{
             advanceUntilIdle()
             assertEquals((awaitItem() as CardsScreenState.Success).message, "")
         }
-
     }
+
+    @Test
+    fun `updateFlashCard should emit Error state if ResultFlashCard_Error is returned`() = runTest {
+
+        //Given
+        coEvery { repository.updateFlashCard(flashCard) } returns FlashCardMotherObject.resultFlashCardError
+        coEvery { repository.getFlashCards() } returns FlashCardMotherObject.resultFlashCardSuccess
+
+        //When
+        viewModel.updateFlashCard(flashCard)
+
+        //Then
+        viewModel.state.test {
+            assertTrue(awaitItem() is CardsScreenState.Loading)
+            advanceUntilIdle()
+            val state = awaitItem()
+            assertTrue(state is CardsScreenState.Error)
+            assertEquals((state as CardsScreenState.Error).error, FlashCardMotherObject.resultFlashCardError.error)
+        }
+    }
+
+    @Test
+    fun `updateFlashCard should emit Error state if an exception occurs`() = runTest {
+
+        //Given
+        coEvery { repository.updateFlashCard(flashCard) } throws RuntimeException(error)
+        coEvery { repository.getFlashCards() } returns FlashCardMotherObject.resultFlashCardSuccess
+
+        //When
+        viewModel.updateFlashCard(flashCard)
+
+        //Then
+        viewModel.state.test {
+            assertTrue(awaitItem() is CardsScreenState.Loading)
+            advanceUntilIdle()
+            val state = awaitItem()
+            assertTrue(state is CardsScreenState.Error)
+            assertEquals((state as CardsScreenState.Error).error, FlashCardMotherObject.resultFlashCardError.error)
+        }
+    }
+
+    @Test
+    fun `getFlashCards should emit Success state if ResultFlashCard_Success is returned`() = runTest {
+        //Given
+        coEvery { repository.getFlashCards() } returns FlashCardMotherObject.resultFlashCardSuccess
+
+        //When
+        viewModel.getFlashCards()
+
+        //Then
+        viewModel.state.test {
+            assertTrue(awaitItem() is CardsScreenState.Loading)
+            advanceUntilIdle()
+            val state = awaitItem()
+            assertTrue(state is CardsScreenState.Success)
+            assertEquals(viewModel.flashCards.value, FlashCardMotherObject.resultFlashCardSuccess.data)
+        }
+    }
+
+    @Test
+    fun `getFlashCards should emit Success state if ResultFlashCard_Error is returned`() = runTest {
+        //Given
+        coEvery { repository.getFlashCards() } returns FlashCardMotherObject.resultFlashCardError
+
+        //When
+        viewModel.getFlashCards()
+
+        //Then
+        viewModel.state.test {
+            assertTrue(awaitItem() is CardsScreenState.Loading)
+            advanceUntilIdle()
+            val state = awaitItem()
+            assertTrue(state is CardsScreenState.Error)
+            val errorState = state as CardsScreenState.Error
+            assertEquals(errorState.error, error)
+        }
+    }
+
+    @Test
+    fun `getFlashCards should emit Success state if an exception occurs`() = runTest {
+        //Given
+        coEvery { repository.getFlashCards() } throws  RuntimeException(error)
+
+        //When
+        viewModel.getFlashCards()
+
+        //Then
+        viewModel.state.test {
+            assertTrue(awaitItem() is CardsScreenState.Loading)
+            advanceUntilIdle()
+            val state = awaitItem()
+            assertTrue(state is CardsScreenState.Error)
+            val errorState = state as CardsScreenState.Error
+            assertEquals(errorState.error, error)
+        }
+    }
+
+    @Test
+    fun `deleteFlashCard should emit Success state if ResultFlashCard_Success is returned`() = runTest {
+        //Given
+        coEvery { repository.deleteFlashCard("1")} returns FlashCardMotherObject.resultFlashCardSuccessCreationMsg
+        coEvery { repository.getFlashCards() } returns FlashCardMotherObject.resultFlashCardSuccess
+
+        //When
+        viewModel.deleteFlashCard("1")
+
+        //Then
+        viewModel.state.test {
+            assertTrue(awaitItem() is CardsScreenState.Loading)
+            advanceUntilIdle()
+            val state = awaitItem()
+            assertTrue(state is CardsScreenState.Success)
+            assertEquals((state as CardsScreenState.Success).message, FlashCardMotherObject.resultFlashCardSuccessCreationMsg.data)
+            advanceUntilIdle()
+            assertEquals((awaitItem() as CardsScreenState.Success).message, "")
+        }
+    }
+
+    @Test
+    fun `deleteFlashCard should emit Error state if ResultFlashCard_Error is returned`() = runTest {
+        // When
+        coEvery { repository.deleteFlashCard("1")} returns FlashCardMotherObject.resultFlashCardError
+
+        //When
+        viewModel.deleteFlashCard("1")
+
+        //Then
+        viewModel.state.test {
+            assertTrue(awaitItem() is CardsScreenState.Loading)
+            advanceUntilIdle()
+            val state = awaitItem()
+            assertTrue(state is CardsScreenState.Error)
+            assertEquals((state as CardsScreenState.Error).error, error)
+        }
+    }
+
+    @Test
+    fun `deleteFlashCard should emit Error state if an exception occurs`() = runTest {
+        // When
+        coEvery { repository.deleteFlashCard("1")} throws RuntimeException(error)
+
+        //When
+        viewModel.deleteFlashCard("1")
+
+        //Then
+        viewModel.state.test {
+            assertTrue(awaitItem() is CardsScreenState.Loading)
+            advanceUntilIdle()
+            val state = awaitItem()
+            assertTrue(state is CardsScreenState.Error)
+            assertEquals((state as CardsScreenState.Error).error, error)
+        }
+    }
+
 }
