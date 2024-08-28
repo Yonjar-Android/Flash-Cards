@@ -4,6 +4,7 @@ import app.cash.turbine.test
 import com.example.flashcards.TestCoroutineRule
 import com.example.flashcards.flashCards.data.repositories.FlashCardsRepository
 import com.example.flashcards.flashCards.domain.models.FlashCard
+import com.example.flashcards.flashCards.utils.ResourceProvider
 import com.example.flashcards.motherObject.FlashCardMotherObject
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
@@ -26,6 +27,9 @@ class StudyScreenViewModelTest {
     @MockK
     lateinit var repository: FlashCardsRepository
 
+    @MockK
+    lateinit var resourceProvider: ResourceProvider
+
     private lateinit var viewModel: StudyScreenViewModel
 
     private val errorMessage = "An error has occurred"
@@ -38,7 +42,7 @@ class StudyScreenViewModelTest {
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
-        viewModel = StudyScreenViewModel(repository)
+        viewModel = StudyScreenViewModel(repository,resourceProvider)
     }
 
     @Test
@@ -61,28 +65,6 @@ class StudyScreenViewModelTest {
                 advanceUntilIdle()
                 assertTrue(awaitItem() is StudyScreenState.Success)
                 assertEquals(viewModel.flashcards.value, FlashCardMotherObject.flashCardsList)
-            }
-        }
-
-    @Test
-    fun `getFlashCards should emit error state if the received from repository is empty`() =
-        runTest {
-            //Given
-
-            coEvery { repository.getFlashCards() } returns FlashCardMotherObject.resultFlashCardSuccessEmpty
-
-            //When
-
-            viewModel.getFlashCards()
-
-            //Then
-
-
-            viewModel.state.test {
-                assertTrue(awaitItem() is StudyScreenState.Initial)
-                advanceUntilIdle()
-                assertTrue(awaitItem() is StudyScreenState.Error)
-                assertEquals(viewModel.flashcards.value, listOf<FlashCard>())
             }
         }
 

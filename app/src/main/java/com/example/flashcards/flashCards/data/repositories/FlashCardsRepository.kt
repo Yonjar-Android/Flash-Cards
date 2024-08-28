@@ -1,8 +1,10 @@
 package com.example.flashcards.flashCards.data.repositories
 
+import com.example.flashcards.R
 import com.example.flashcards.flashCards.data.models.FlashCardModel
 import com.example.flashcards.flashCards.domain.models.FlashCard
 import com.example.flashcards.flashCards.domain.repositories.FlashCardsRepo
+import com.example.flashcards.flashCards.utils.ResourceProvider
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.suspendCancellableCoroutine
 import javax.inject.Inject
@@ -10,7 +12,8 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 class FlashCardsRepository @Inject constructor(
-    private val firestore: FirebaseFirestore
+    private val firestore: FirebaseFirestore,
+    private val resourceProvider: ResourceProvider
 ) :
     FlashCardsRepo {
     override suspend fun getFlashCards(): ResultFlashCard<List<FlashCard>> {
@@ -21,14 +24,14 @@ class FlashCardsRepository @Inject constructor(
                         val flashCards =
                             task.result?.toObjects(FlashCardModel::class.java) ?: emptyList()
                         if (flashCards.isEmpty()) {
-                            continuation.resume(ResultFlashCard.Error("No hay flashcards para estudiar"))
+                            continuation.resume(ResultFlashCard.Error(resourceProvider.getString(R.string.strNoFlashCardsToStudy)))
                         } else {
                             val newFlashCards = convertToFlashCardDomainModel(flashCards)
                             continuation.resume(ResultFlashCard.Success(newFlashCards))
                         }
 
                     } else {
-                        continuation.resume(ResultFlashCard.Error("Error al obtener las flashcards"))
+                        continuation.resume(ResultFlashCard.Error(resourceProvider.getString(R.string.strErrorGettingCards)))
                     }
                 }.addOnFailureListener { e ->
                     continuation.resume(ResultFlashCard.Error(e.message ?: ""))
@@ -70,7 +73,7 @@ class FlashCardsRepository @Inject constructor(
 
             flashCardRef.set(flashCard)
                 .addOnSuccessListener {
-                    continuation.resume(ResultFlashCard.Success("Flashcard creada con éxito"))
+                    continuation.resume(ResultFlashCard.Success(resourceProvider.getString(R.string.strFlashCardCreatedSuccessfully)))
                 }.addOnFailureListener { e ->
                     continuation.resume(ResultFlashCard.Error(e.message ?: ""))
                 }
@@ -104,7 +107,7 @@ class FlashCardsRepository @Inject constructor(
             firestore.collection("FlashCards").document(flashCard.id)
                 .update(updateFlashCard)
                 .addOnSuccessListener {
-                    continuation.resume(ResultFlashCard.Success("La flash card fue actualizada con éxito"))
+                    continuation.resume(ResultFlashCard.Success(resourceProvider.getString(R.string.strFlashCardUpdatedSuccessfully)))
                 }
                 .addOnFailureListener {
                     continuation.resume(ResultFlashCard.Error(it.message ?: ""))
@@ -117,7 +120,7 @@ class FlashCardsRepository @Inject constructor(
 
             firestore.collection("FlashCards").document(flashCardId).delete()
                 .addOnSuccessListener {
-                    continuation.resume(ResultFlashCard.Success("Se ha eliminado la flash card con éxito"))
+                    continuation.resume(ResultFlashCard.Success(resourceProvider.getString(R.string.strFlashCardDeletedSuccessfully)))
                 }.addOnFailureListener {
                     continuation.resume(ResultFlashCard.Error(it.message ?: ""))
                 }

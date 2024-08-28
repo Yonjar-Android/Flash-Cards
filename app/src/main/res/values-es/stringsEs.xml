@@ -28,4 +28,14 @@
     <string name="strCancel">Cancelar</string>
     <string name="strDeleteFlashCard">Eliminar flash card</string>
     <string name="strDeleteThisFlashCard">¿Deseas eliminar esta flash card?</string>
+
+    <string name="strNoFlashCardsToStudy">No hay cartas para estudiar</string>
+    <string name="strErrorGettingCards">Hubo un fallo al obtener las flashcards</string>
+
+    <string name="strFlashCardCreatedSuccessfully">Flashcard creada con éxito</string>
+    <string name="strFlashCardUpdatedSuccessfully">La flash card fue actualizada con éxito</string>
+    <string name="strFlashCardDeletedSuccessfully">Se ha eliminado la flash card con éxito</string>
+
+    <string name="strNoBlankFields">No puede dejar ninguno de los campos en blanco</string>
+
 </resources>

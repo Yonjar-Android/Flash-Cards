@@ -2,9 +2,11 @@ package com.example.flashcards.flashCards.ui.flashCardsScreen.studyScreen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.flashcards.R
 import com.example.flashcards.flashCards.data.repositories.FlashCardsRepository
 import com.example.flashcards.flashCards.data.repositories.ResultFlashCard
 import com.example.flashcards.flashCards.domain.models.FlashCard
+import com.example.flashcards.flashCards.utils.ResourceProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -12,7 +14,9 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class StudyScreenViewModel @Inject constructor(private val repository: FlashCardsRepository) :
+class StudyScreenViewModel @Inject constructor(
+    private val repository: FlashCardsRepository,
+    private val resourceProvider: ResourceProvider) :
     ViewModel() {
 
     private val _state = MutableStateFlow<StudyScreenState>(StudyScreenState.Initial)
@@ -32,13 +36,8 @@ class StudyScreenViewModel @Inject constructor(private val repository: FlashCard
                     }
 
                     is ResultFlashCard.Success -> {
-                        if (response.data.isEmpty()) {
-                            _state.value = StudyScreenState.Error(error = "No hay cartas para estudiar")
-                            _flashCards.value = mutableListOf()
-                        } else {
                             _state.value = StudyScreenState.Success()
                             _flashCards.value = response.data
-                        }
                     }
                 }
             } catch (e: Exception) {
@@ -75,12 +74,11 @@ class StudyScreenViewModel @Inject constructor(private val repository: FlashCard
 
     private fun validations(title:String, answer: String):Boolean{
         return if (title.isBlank() || answer.isBlank()){
-            _state.value = StudyScreenState.Error("No puede dejar ninguno de los campos en blanco")
+            _state.value = StudyScreenState.Error(resourceProvider.getString(R.string.strNoBlankFields))
             false
         } else{
             true
         }
-
     }
 
     fun updateFlashCardReview(flashCard: FlashCard) {

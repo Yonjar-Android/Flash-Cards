@@ -28,4 +28,12 @@
     <string name="strDeleteFlashCard">Delete flash card</string>
     <string name="strDeleteThisFlashCard">Would you like to delete this flash card?</string>
 
+    <string name="strNoFlashCardsToStudy">There is no flash cards to study</string>
+    <string name="strErrorGettingCards">There was a failure to obtain flashcards</string>
+
+    <string name="strFlashCardCreatedSuccessfully">Flash card created successfully</string>
+    <string name="strFlashCardUpdatedSuccessfully">Flash card updated successfully</string>
+    <string name="strFlashCardDeletedSuccessfully">Flash card deleted successfully</string>
+
+    <string name="strNoBlankFields">You may not leave any of the fields blank</string>
 </resources>
