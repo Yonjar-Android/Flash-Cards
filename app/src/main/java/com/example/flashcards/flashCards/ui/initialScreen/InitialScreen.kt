@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -47,7 +48,7 @@ fun InitialScreen(viewModel: InitialScreenViewModel,
             .background(Color(0xffD6D6D6))
     ) {
 
-
+        val errorMessage = stringResource(id = R.string.errorSignInGoogle)
 
         val (buttons, logo, title) = createRefs()
 
@@ -66,7 +67,7 @@ fun InitialScreen(viewModel: InitialScreenViewModel,
                         if (success) {
                             navHostController.navigate("FlashCardsScreen")
                         } else {
-                            Toast.makeText(context, "Error on Sign In with Google", Toast.LENGTH_LONG)
+                            Toast.makeText(context, errorMessage, Toast.LENGTH_LONG)
                                 .show()
                         }
                     }

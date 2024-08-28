@@ -41,6 +41,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -79,7 +80,7 @@ fun StudyScreen(studyScreenViewModel: StudyScreenViewModel) {
     ) {
 
         Text(
-            text = "Cartas por estudiar N°: ${flashCards.value.size}",
+            text = "${stringResource(id = R.string.flashCardsToStudy)} ${flashCards.value.size}",
             fontWeight = FontWeight.Bold,
             fontSize = 32.sp,
             lineHeight = 30.sp,
@@ -108,7 +109,7 @@ fun StudyScreen(studyScreenViewModel: StudyScreenViewModel) {
             }, colors = ButtonDefaults.buttonColors(containerColor = Color(0xff072ECD)),
             enabled = flashCards.value.isNotEmpty()
         ) {
-            Text(text = "Estudiar", fontWeight = FontWeight.Bold, fontSize = 32.sp)
+            Text(text = stringResource(id = R.string.strStudy), fontWeight = FontWeight.Bold, fontSize = 32.sp)
         }
     }
 
@@ -249,11 +250,11 @@ fun DialogAddCards(
 
                 DefectSpacer()
 
-                TextFieldComponent("Concepto", name) { name = it }
+                TextFieldComponent(stringResource(id = R.string.strConcept), name) { name = it }
 
                 DefectSpacer()
 
-                TextFieldComponent("Respuesta", answer) { answer = it }
+                TextFieldComponent(stringResource(id = R.string.strAnswer), answer) { answer = it }
 
                 DefectSpacer()
 
@@ -348,8 +349,8 @@ fun FlashCardItem(
     onSwiped: ((FlashCard) -> Unit) -> Unit
 ) {
 
-    val showAnswer = "Show answer"
-    val showQuestion = "Show question"
+    val showAnswer = stringResource(id = R.string.showAnswer)
+    val showQuestion = stringResource(id = R.string.showConcept)
 
     var textValue by rememberSaveable {
         mutableStateOf(flashCard.title)
@@ -376,12 +377,12 @@ fun FlashCardItem(
 
         Button(onClick = {
             when (textValueButton) {
-                "Show answer" -> {
+                showAnswer -> {
                     textValueButton = showQuestion
                     textValue = flashCard.answer
                 }
 
-                "Show question" -> {
+                showQuestion -> {
                     textValueButton = showAnswer
                     textValue = flashCard.title
                 }
@@ -411,7 +412,7 @@ fun FlashCardItem(
                 studyScreenViewModel = studyScreenViewModel,
                 flashCard = flashCard,
                 interval = 1 * 60 * 1000,
-                text = "1 minuto",
+                text = stringResource(id = R.string.oneMinute),
                 onUpdateCompleted = {
                     onSwiped() {
                         textValue = it.title
@@ -423,7 +424,7 @@ fun FlashCardItem(
                 studyScreenViewModel = studyScreenViewModel,
                 flashCard = flashCard,
                 interval = 5 * 60 * 1000,
-                text = "5 minutos",
+                text = stringResource(id = R.string.fiveMinutes),
                 onUpdateCompleted = {
                     onSwiped() {
                         textValue = it.title
@@ -436,7 +437,7 @@ fun FlashCardItem(
                 studyScreenViewModel = studyScreenViewModel,
                 flashCard = flashCard,
                 interval = 24 * 60 * 60 * 1000,
-                text = "1 Día",
+                text = stringResource(id = R.string.oneDay),
                 onUpdateCompleted = {
                     onSwiped() {
                         textValue = it.title
@@ -449,7 +450,7 @@ fun FlashCardItem(
                 studyScreenViewModel = studyScreenViewModel,
                 flashCard = flashCard,
                 interval = 7 * 24 * 60 * 60 * 1000,
-                text = "1 Semana",
+                text = stringResource(id = R.string.oneWeek),
                 onUpdateCompleted = {
                     onSwiped() {
                         textValue = it.title

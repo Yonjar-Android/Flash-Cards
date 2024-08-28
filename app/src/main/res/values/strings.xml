@@ -2,4 +2,30 @@
     <string name="app_name">Flash Cards</string>
 
     <string name="tokenIdClient">36412686936-0oi15vrn58p3h8220f7qs6j0rlm4co69.apps.googleusercontent.com</string>
+
+    <string name="errorSignInGoogle">Error on Sign In with Google</string>
+
+    <string name="flashCardsToStudy">Flash cards to study N°:</string>
+
+    <string name="strStudy">Study</string>
+    <string name="strConcept">Concept</string>
+    <string name="strAnswer">Answer</string>
+    <string name="strCreate">Create</string>
+    <string name="showConcept">Show question</string>
+    <string name="showAnswer">Show answer</string>
+
+    <string name="oneMinute">1 minute</string>
+    <string name="fiveMinutes">5 minutes</string>
+    <string name="oneDay">1 day</string>
+    <string name="oneWeek">1 week</string>
+
+    <string name="strQuestion">Question</string>
+    <string name="strUpdate">Update</string>
+    <string name="strEdit">Edit</string>
+    <string name="strEditFlashCard">Edit flash card</string>
+    <string name="strDelete">Delete</string>
+    <string name="strCancel">Cancel</string>
+    <string name="strDeleteFlashCard">Delete flash card</string>
+    <string name="strDeleteThisFlashCard">Would you like to delete this flash card?</string>
+
 </resources>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Flash Cards</string>
+
+    <string name="tokenIdClient">36412686936-0oi15vrn58p3h8220f7qs6j0rlm4co69.apps.googleusercontent.com</string>
+
+    <string name="errorSignInGoogle">Error al iniciar sesión con google</string>
+
+    <string name="flashCardsToStudy">Cartas para estudiar N°:</string>
+
+    <string name="strStudy">Estudiar</string>
+    <string name="strConcept">Concepto</string>
+    <string name="strAnswer">Respuesta</string>
+    <string name="strCreate">Crear</string>
+    <string name="showConcept">Mostrar pregunta</string>
+    <string name="showAnswer">Mostrar respuesta</string>
+
+    <string name="oneMinute">1 minuto</string>
+    <string name="fiveMinutes">5 minutos</string>
+    <string name="oneDay">1 día</string>
+    <string name="oneWeek">1 semana</string>
+
+    <string name="strQuestion">Pregunta</string>
+    <string name="strUpdate">Actualizar</string>
+    <string name="strEdit">Editar</string>
+    <string name="strEditFlashCard">Editar flash card</string>
+    <string name="strDelete">Eliminar</string>
+    <string name="strCancel">Cancelar</string>
+    <string name="strDeleteFlashCard">Eliminar flash card</string>
+    <string name="strDeleteThisFlashCard">¿Deseas eliminar esta flash card?</string>
+</resources>

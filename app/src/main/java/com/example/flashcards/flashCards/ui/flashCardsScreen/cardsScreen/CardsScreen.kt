@@ -42,11 +42,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.flashcards.R
 import com.example.flashcards.flashCards.domain.models.FlashCard
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -133,14 +135,14 @@ fun DropDownMenuComp(flashCard: FlashCard, viewModel: CardsViewModel) {
             expanded = showDropDownMenu, onDismissRequest = { showDropDownMenu = false }) {
 
             DropdownMenuItem(text = {
-                Text(text = "Editar", fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+                Text(text = stringResource(id = R.string.strEdit), fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
             }, onClick = {
                 showDropDownMenu = false
                 showEditDialog = true
             })
 
             DropdownMenuItem(text = {
-                Text(text = "Eliminar", fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+                Text(text = stringResource(id = R.string.strDelete), fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
             }, onClick = {
                 showDropDownMenu = false
                 showDeleteDialog = true
@@ -170,22 +172,22 @@ fun DialogDelete(flashCard: FlashCard, viewModel: CardsViewModel, close: () -> U
             viewModel.deleteFlashCard(flashCard.id)
             close()
         }) {
-            Text(text = "Eliminar")
+            Text(text = stringResource(id = R.string.strDelete))
         }
     },
         dismissButton = {
             TextButton(onClick = {
                 close()
             }) {
-                Text(text = "Cancelar")
+                Text(text = stringResource(id = R.string.strCancel))
 
             }
         },
         title = {
-            Text(text = "Eliminar flash card", fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
+            Text(text = stringResource(id = R.string.strDeleteFlashCard), fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
         },
         text = {
-            Text(text = "¿Deseas eliminar esta flash card?", fontSize = 16.sp)
+            Text(text = stringResource(id = R.string.strDeleteThisFlashCard), fontSize = 16.sp)
         })
 }
 
@@ -211,7 +213,7 @@ fun EditFormDialog(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(text = "Editar Flash Card", fontWeight = FontWeight.SemiBold)
+                Text(text = stringResource(id = R.string.strEditFlashCard), fontWeight = FontWeight.SemiBold)
             }
         },
         text = {
@@ -221,7 +223,7 @@ fun EditFormDialog(
                     onValueChange = { question = it },
                     label = {
                         Text(
-                            text = "Pregunta",
+                            text = stringResource(id = R.string.strQuestion),
                             fontSize = 18.sp,
                             fontWeight = FontWeight.SemiBold
                         )
@@ -238,7 +240,7 @@ fun EditFormDialog(
                     onValueChange = { answer = it },
                     label = {
                         Text(
-                            text = "Respuesta",
+                            text = stringResource(id = R.string.strAnswer),
                             fontSize = 18.sp,
                             fontWeight = FontWeight.SemiBold
                         )
@@ -263,12 +265,12 @@ fun EditFormDialog(
 
                 close.invoke()
             }) {
-                Text(text = "Actualizar")
+                Text(text = stringResource(id = R.string.strUpdate))
             }
         },
         dismissButton = {
             TextButton(onClick = { close.invoke() }) {
-                Text(text = "Cancelar")
+                Text(text = stringResource(id = R.string.strCancel))
             }
         }
     )
@@ -294,7 +296,7 @@ fun FlashCardItem(flashCard: FlashCard, viewModel: CardsViewModel) {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Question: ${flashCard.title}",
+                    text = "${stringResource(id = R.string.strQuestion)}: ${flashCard.title}",
                     textAlign = TextAlign.Center,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.SemiBold,
@@ -302,7 +304,7 @@ fun FlashCardItem(flashCard: FlashCard, viewModel: CardsViewModel) {
                     maxLines = 1
                 )
                 Text(
-                    text = "Answer: ${flashCard.answer}",
+                    text = "${stringResource(id = R.string.strAnswer)}: ${flashCard.answer}",
                     textAlign = TextAlign.Center,
                     fontSize = 16.sp,
                     overflow = TextOverflow.Ellipsis,
