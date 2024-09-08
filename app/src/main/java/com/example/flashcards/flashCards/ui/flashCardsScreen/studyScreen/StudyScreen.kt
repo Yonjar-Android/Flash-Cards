@@ -24,6 +24,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -109,7 +110,7 @@ fun StudyScreen(studyScreenViewModel: StudyScreenViewModel) {
             }, colors = ButtonDefaults.buttonColors(containerColor = Color(0xff072ECD)),
             enabled = flashCards.value.isNotEmpty()
         ) {
-            Text(text = stringResource(id = R.string.strStudy), fontWeight = FontWeight.Bold, fontSize = 32.sp)
+            Text(text = stringResource(id = R.string.strStudy), fontWeight = FontWeight.Bold, fontSize = 32.sp, color = Color.White)
         }
     }
 
@@ -211,12 +212,13 @@ fun DialogAddCards(
         Modifier
             .fillMaxSize()
             .clip(RoundedCornerShape(30.dp))
+
     ) {
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.White),
+                .background(MaterialTheme.colorScheme.background),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -262,6 +264,7 @@ fun DialogAddCards(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 10.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xff072ECD)),
                     onClick = {
                         studyScreenViewModel.createFlashCard(name, answer)
 
@@ -314,14 +317,12 @@ fun FlashCards(
     close: () -> Unit
 ) {
 
-    val context = LocalContext.current
-
-    var currentIndex = 0
+    val currentIndex = 0
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White),
+            .background(MaterialTheme.colorScheme.background),
         contentAlignment = Alignment.Center
     ) {
         if (flashCards.isNotEmpty()) {
@@ -364,6 +365,8 @@ fun FlashCardItem(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
         modifier = Modifier.verticalScroll(rememberScrollState())
+
+
     ) {
 
         Text(
@@ -388,7 +391,7 @@ fun FlashCardItem(
                 }
             }
 
-        }, colors = ButtonDefaults.buttonColors(containerColor = Color(0XFF07D07D)),
+        }, colors = ButtonDefaults.buttonColors(containerColor = Color(0XFF07aa66)),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp)) {
@@ -396,7 +399,8 @@ fun FlashCardItem(
                 text = textValueButton,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                color = Color.White
             )
         }
 
@@ -501,9 +505,10 @@ private fun NextReviewButton(
         },
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 20.dp)
+            .padding(horizontal = 20.dp),
+        colors = ButtonDefaults.buttonColors(containerColor = Color(0xff072ECD))
     ) {
-        Text(text, fontSize = 24.sp, fontWeight = FontWeight.SemiBold)
+        Text(text, fontSize = 24.sp, fontWeight = FontWeight.SemiBold, color = Color.White)
     }
 
     DefectSpacer()

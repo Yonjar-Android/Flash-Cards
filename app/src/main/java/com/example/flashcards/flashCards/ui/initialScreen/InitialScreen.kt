@@ -19,6 +19,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -45,7 +46,7 @@ fun InitialScreen(viewModel: InitialScreenViewModel,
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .background(Color(0xffD6D6D6))
+            .background(MaterialTheme.colorScheme.background)
     ) {
 
         val errorMessage = stringResource(id = R.string.errorSignInGoogle)
@@ -87,7 +88,7 @@ fun InitialScreen(viewModel: InitialScreenViewModel,
             return googleSignInClient.signInIntent
         }
 
-        Text(text = "Flash Cards App", fontWeight = FontWeight.Bold, fontSize = 48.sp,
+        Text(text = "Flash Cards App", fontWeight = FontWeight.Bold, fontSize = 48.sp, color = MaterialTheme.colorScheme.tertiary,
             modifier = Modifier.constrainAs(title){
                 top.linkTo(guidelineTop)
                 end.linkTo(parent.end)
