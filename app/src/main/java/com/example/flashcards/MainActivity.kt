@@ -7,6 +7,15 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -22,7 +31,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private val initialScreenViewModel:InitialScreenViewModel by viewModels()
+    private val initialScreenViewModel: InitialScreenViewModel by viewModels()
 
     private val studyScreenViewModel: StudyScreenViewModel by viewModels()
 
@@ -32,7 +41,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        installSplashScreen().setKeepOnScreenCondition{
+        installSplashScreen().setKeepOnScreenCondition {
             false
         }
 
@@ -41,22 +50,48 @@ class MainActivity : ComponentActivity() {
 
 
         setContent {
-
             FlashCardsTheme {
+                val loading = initialScreenViewModel.isLoading.collectAsState()
+
                 val navController = rememberNavController()
 
-                NavHost(navController = navController, startDestination = "InitialScreen" ){
-                    composable("InitialScreen"){
-                        InitialScreen(viewModel = initialScreenViewModel,
-                            navHostController = navController)
-                    }
+                if (loading.value) {
+                    LoadingScreen()
+                } else {
 
-                    composable("FlashCardsScreen"){
-                        FlashCardsScreen(studyScreenViewModel, cardsScreenViewModel)
+
+                    NavHost(
+                        navController = navController,
+                        startDestination = if (initialScreenViewModel.isLoggedIn) {
+                            "FlashCardsScreen"
+                        } else {
+                            "InitialScreen"
+                        }
+                    ) {
+                        composable("InitialScreen") {
+                            InitialScreen(
+                                viewModel = initialScreenViewModel,
+                                navHostController = navController
+                            )
+                        }
+
+                        composable("FlashCardsScreen") {
+                            FlashCardsScreen(studyScreenViewModel, cardsScreenViewModel)
+                        }
                     }
                 }
-
             }
         }
+    }
+}
+
+@Composable
+fun LoadingScreen() {
+    Box(
+        Modifier
+            .background(Color.White)
+            .fillMaxSize(), contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator()
     }
 }
